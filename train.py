@@ -1,3 +1,4 @@
+from ast import parse
 import numpy as np
 import os
 import io
@@ -9,9 +10,12 @@ from tensorflow import keras
 from tensorflow.keras import layers
 
 import matplotlib.pyplot as plt
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('epochs', type=int, default=5)
 
-from PIL import Image
+args = parser.parse_args()
 
 model = keras.models.load_model("model")
 
@@ -20,7 +24,7 @@ training_data = keras.utils.image_dataset_from_directory(
     labels='inferred',
     label_mode='categorical',
     batch_size=16,
-    image_size=(400, 400),
+    image_size=(350, 350),
     crop_to_aspect_ratio=True,
     color_mode='rgb'
 )
@@ -29,7 +33,7 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir="./logs", histogra
 
 file_writer = tf.summary.create_file_writer('./logs')
 
-test_image = keras.utils.load_img('./test_data/16c8f0d22ca11d1c086a6243426a9211.png', target_size=(400, 400))
+test_image = keras.utils.load_img('./test_data/16c8f0d22ca11d1c086a6243426a9211.png', target_size=(350, 350))
 test_image_arr = keras.preprocessing.image.img_to_array(test_image)
 
 def test_image_identification(epoch, logs):
@@ -57,9 +61,9 @@ def test_image_identification(epoch, logs):
         tf.summary.image('Prediction', image, step=epoch)
 
 
-history = model.fit(training_data, epochs=20, callbacks=[
-    tensorboard_callback,
-    keras.callbacks.LambdaCallback(on_epoch_end=test_image_identification)
+history = model.fit(training_data, epochs=args.epochs, callbacks=[
+    tensorboard_callback
+    #keras.callbacks.LambdaCallback(on_epoch_end=test_image_identification)
 ])
 
 model.save("model")

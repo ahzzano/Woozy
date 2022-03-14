@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 image_path = args.image
 
-image = keras.utils.load_img(image_path, target_size=(400, 400))
+image = keras.utils.load_img(image_path, target_size=(350, 350))
 image_arr = keras.preprocessing.image.img_to_array(image)
 image_arr_inp = np.array([image_arr])
 
@@ -36,6 +36,6 @@ plt.title(f'Prediction')
 plt.axis('off')
 
 plt.tight_layout()
-plt.title(f'Label: {pred_label} - {test[0][pred] * 100:0.4f}%')
+plt.title(f'{pred_label} - {test[0][pred] * 100:0.4f}%')
 
 plt.show()
